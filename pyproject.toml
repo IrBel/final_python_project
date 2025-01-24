@@ -1,4 +1,6 @@
 [tool.black]
+[tool.pytest.ini_options]
+
 # Set the maximum allowed line length to 120 characters
 line-length = 120
 
@@ -36,3 +38,5 @@ exclude = '''
   | tests/data
 )/
 '''
+
+asyncio_default_fixture_loop_scope = "function"

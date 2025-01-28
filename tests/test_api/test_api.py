@@ -3,16 +3,20 @@ import requests
 from requests.exceptions import Timeout, RequestException
 from jsonschema import validate
 from unittest.mock import patch
-from logger import get_logger
+from core.logger import get_logger
+
+# Initialize the logger
+logger = get_logger(__name__)
+logger.info(" API logger initialized successfully!")
+logger.info("This is an info message.")
+logger.debug("This is a debug message.")
 
 
-
-@pytest.fixture
+@pytest.fixture(scope="session")
 def base_url():
     return "https://jsonplaceholder.typicode.com"
 
-
-@pytest.fixture
+@pytest.fixture(scope="session")
 def headers():
     return {"Content-Type": "application/json"}
 
@@ -30,8 +34,10 @@ post_schema = {
 
 
 # GET + exception handling
+@pytest.mark.api
 def test_get_post(base_url, headers):
     try:
+        logger.debug("Starting log for test_get_post")
         response = requests.get(f"{base_url}/posts/1", headers=headers, timeout=5)
         response.raise_for_status()
         post_data = response.json()
@@ -48,10 +54,13 @@ def test_get_post(base_url, headers):
         pytest.fail(f"Request timed out: {e}")
     except RequestException as e:
         pytest.fail(f"Request failed: {e}")
+        logger.debug("test_get_post successfully passed")
 
 
 # POST using payload
+@pytest.mark.api
 def test_create_post(base_url, headers):
+    logger.debug("Starting log for test_create_post")
     payload = {
         "userId": 101,
         "id": 101,
@@ -71,10 +80,13 @@ def test_create_post(base_url, headers):
     assert my_post['id'] == payload['id']
     assert my_post['title'] == payload['title']
     assert my_post['body'] == payload['body']
+    logger.debug("test_create_post successfully passed")
 
 
 # PUT
+@pytest.mark.api
 def test_update_post(base_url, headers):
+    logger.debug("Starting log for test_update_post")
     post_id = 1
     updated_payload = {
         "userId": 1,
@@ -92,10 +104,13 @@ def test_update_post(base_url, headers):
     # Verify updates
     assert post_data['title'] == updated_payload['title']
     assert post_data['body'] == updated_payload['body']
+    logger.debug("test_update_post successfully passed")
 
 
 # DELETE
+@pytest.mark.api
 def test_delete_post(base_url, headers):
+    logger.debug("Starting log for test_delete_post")
     post_id = 101
     response = requests.delete(f"{base_url}/posts/{post_id}", headers=headers)
 
@@ -105,9 +120,7 @@ def test_delete_post(base_url, headers):
         mock_get.return_value.status_code = 404
         check_response = requests.get(f"{base_url}/posts/{post_id}", headers=headers)
         assert check_response.status_code == 404
+    logger.debug("test_delete_post successfully passed")
 
 # pytest main.py -s
-
-# Setup basic configuration for logging
-logger = get_logger(__name__)
 

@@ -14,12 +14,23 @@ Web UI - https://demoqa.com/text-box
 
 ## Test Execution and Reporting
 
-To execute the tests locally:
+To execute the tests locally and get the test result report:
 
-```bash
-$  pytest API_tests/ --html=reports/api_report.html
+- to execute API test cases and create the appropriate report run
 ```
-```bash
-$  pytest UI_tests/ --html=reports/ui_report.html
+python -m pytest tests\test_api\test_api.py
 ```
-After execution, report will be automatically generated with captured logs for each test in ```reports/``` folder
+- to execute UI test cases and create the appropriate report run
+```
+python -m pytest tests\test_ui\test_ui.py
+```
+- to execute all test cases and create the global report that consolidates the results from both the Web UI and API tests run
+```
+python -m pytest
+```
+
+Test reports are automatically generated and stored in the reports/ directory after the execution of the corresponding tests. 
+To view the HTML report open the report.html file in any web browser.
+
+## Logging
+Log files are generated and stored in the logs/ directory.
